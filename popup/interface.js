@@ -132,7 +132,7 @@ function activate_buttons() {
                 button.setAttribute('title', '');
             }
 
-        } else if(button.classList.contains('download-ndjson') || button.classList.contains('reset')) {
+        } else if(button.classList.contains('download-ndjson') || button.classList.contains('download-json') || button.classList.contains('reset')) {
             new_status = !(items > 0);
         }
 
@@ -238,6 +238,10 @@ async function get_stats() {
                 "data-platform": platform,
                 "class": "download-ndjson"
             }, ".ndjson");
+            let download_json_button = createElement("button", {
+                "data-platform": platform,
+                "class": "download-json"
+            }, ".json");
             let fourcat_button = createElement("button", {
                 "data-platform": platform,
                 "class": "upload-to-4cat",
@@ -245,6 +249,7 @@ async function get_stats() {
 
             actions.appendChild(clear_button);
             actions.appendChild(download_button);
+            actions.appendChild(download_json_button);
             actions.appendChild(fourcat_button);
 
             row.appendChild(actions);
@@ -331,6 +336,23 @@ async function button_handler(event) {
         const downloadUrl = window.URL.createObjectURL(blob);
         const downloadId = await browser.downloads.download({
             url: window.URL.createObjectURL(blob),
+            filename: filename,
+            conflictAction: 'uniquify'
+        });
+        downloadUrls.set(downloadId, downloadUrl);
+
+        event.target.classList.remove('loading');
+
+    } else if (event.target.matches('.download-json')) {
+        let platform = event.target.getAttribute('data-platform');
+        let date = new Date();
+        event.target.classList.add('loading');
+
+        let blob = await get_json_blob(platform);
+        let filename = 'zeeschuimer-export-' + platform + '-' + date.toISOString().split(".")[0].replace(/:/g, "") + '.json';
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const downloadId = await browser.downloads.download({
+            url: downloadUrl,
             filename: filename,
             conflictAction: 'uniquify'
         });
@@ -572,6 +594,25 @@ async function get_blob(platform) {
     });
 
     return new Blob(ndjson, {type: 'application/x-ndjson'});
+}
+
+/**
+ * Get a JSON array dump of items
+ *
+ * Returns a Blob with all items as a standard JSON array, which can be opened
+ * in any JSON viewer or tool.
+ *
+ * @param platform
+ * @returns {Promise<Blob>}
+ */
+async function get_json_blob(platform) {
+    let items = [];
+
+    await iterate_items(platform, function(item) {
+        items.push(item);
+    });
+
+    return new Blob([JSON.stringify(items, null, 2)], {type: 'application/json'});
 }
 
 /**
