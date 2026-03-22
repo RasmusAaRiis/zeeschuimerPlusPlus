@@ -4,11 +4,11 @@
   "manifest_version": 2,
   "name": "Zeeschuimer++",
   "version": "1.13.X",
-  "homepage_url": "https://github.com/digitalmethodsinitiative/zeeschuimer",
+  "homepage_url": "https://github.com/RasmusAaRiis/zeeschuimerPlusPlus",
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "zeeschuimer@digitalmethods.net",
+      "id": "rasmus.aagot.riis@gmail.com",
       "update_url": "https://extensions.digitalmethods.net/updates.json",
       "data_collection_permissions": {
         "required": ["none"]
