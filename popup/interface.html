@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <title>Zeeschuimer</title>
+    <title>Zeeschuimer++</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Security-Policy" content="script-src *;">
     <link rel="stylesheet" href="tooltips.css">
@@ -10,11 +10,11 @@
     <script src="../js/streamsaver-2.0.3.js"></script>-->
     <style>
         :root {
-            --neutral: #d9c398;
-            --neutral-contrast: #3C3C3B;
-            --neutral-contrast-alt: #5d6c4c;
-            --accent-alt: #b45d3d;
-            --accent: #e0ba5f;
+            --neutral: #acacac;
+            --neutral-contrast: #373737;
+            --neutral-contrast-alt: #1a6505;
+            --accent-alt: #218306;
+            --accent: #c6c6c6;
         }
 
         *[aria-hidden=true] {
@@ -47,30 +47,6 @@
             font-weight: bold;
             font-style: italic;
             src: url("../fonts/OpenSans-BoldItalic.ttf")
-        }
-
-        @font-face {
-            font-family: 'Lobster Two';
-            src: url("../fonts/LobsterTwo-Regular.ttf")
-        }
-
-        @font-face {
-            font-family: 'Lobster Two';
-            font-weight: bold;
-            src: url("../fonts/LobsterTwo-Bold.ttf")
-        }
-
-        @font-face {
-            font-family: 'Lobster Two';
-            font-style: italic;
-            src: url("../fonts/LobsterTwo-Italic.ttf")
-        }
-
-        @font-face {
-            font-family: 'Lobster Two';
-            font-weight: bold;
-            font-style: italic;
-            src: url("../fonts/LobsterTwo-BoldItalic.ttf")
         }
 
         html {
@@ -106,7 +82,7 @@
 
         h1, h2 {
             font-size: 3em;
-            font-family: 'Lobster Two', serif;
+            font-family: 'Helvetica', sans-serif;
             font-style: italic;
             font-weight: bold;
         }
@@ -141,7 +117,7 @@
 
         .version {
             font-size: 1em;
-            font-family: 'Lobster Two', serif;
+            font-family: 'Open Sans', sans-serif;
         }
 
         .version a {
@@ -166,7 +142,8 @@
         }
 
         body.beta header::after {
-            font-family: 'Lobster Two', serif;
+            font-family: 'Helvetica', sans-serif;
+            font-style: italic;
             font-weight: bold;
             transform: rotate(20deg);
             background: var(--accent);
@@ -381,8 +358,7 @@
 <body>
 <article>
     <header>
-        <h1>Zeeschuimer</h1>
-        <span class="version"><a href="https://github.com/digitalmethodsinitiative/zeeschuimer/releases/tag/v1.13.6">v1.13.6</a></span>
+        <h1>Zeeschuimer++</h1>
     </header>
     <section id="status">
         <h2><span>Captured data objects</span></h2>

@@ -82,6 +82,11 @@ function extractEmbeddedInstagramJSON(response) {
     return datas;
 };
 
+// Cache for profile data (bio, follower/following counts) keyed by user pk/id.
+// Populated when Instagram's profile info API response is intercepted, then
+// merged into the `user` object of any posts captured from that profile.
+const profileCache = {};
+
 zeeschuimer.register_module(
     'Instagram (posts & reels)',
     'instagram.com',
@@ -252,6 +257,29 @@ zeeschuimer.register_module(
             // console.log('ignoring background request ' + source_url);
             datas = [];
         }
+
+        // --- Profile data extraction ---
+        // Instagram's /api/v1/users/web_profile_info/ response contains the full
+        // user object including biography, follower_count, and following_count.
+        // These fields are absent from the per-post `user` objects, so we cache
+        // them here and merge them into posts below.
+        for (const data of datas) {
+            // web_profile_info response: { data: { user: { pk, biography, ... } } }
+            const profileUser = data?.data?.user;
+            if (profileUser && ('biography' in profileUser || 'follower_count' in profileUser)) {
+                const pk = String(profileUser.pk || profileUser.id || '');
+                if (pk) {
+                    profileCache[pk] = {
+                        biography:       profileUser.biography       ?? null,
+                        follower_count:  profileUser.follower_count  ?? null,
+                        following_count: profileUser.following_count ?? null,
+                        full_name:       profileUser.full_name       ?? null,
+                    };
+                    if (debug_logs) console.log('Cached profile data for pk', pk, profileCache[pk]);
+                }
+            }
+        }
+        // --------------------------------
 
         let possible_item_lists = ["items", "edges", "repost_grid_items", "medias", "feed_items", "fill_items", "two_by_two_item"];
         let edges = [];
@@ -463,6 +491,19 @@ zeeschuimer.register_module(
                 edge = Object.assign({}, edge, {
                     _zs_partial: false
                 });
+            }
+
+            // Enrich `user` with cached profile data (bio, follower/following counts).
+            // The cache is populated when the profile page's web_profile_info API
+            // response is intercepted — typically before or alongside the posts request.
+            if (edge.user) {
+                const pk = String(edge.user.pk || edge.user.id || '');
+                if (pk && profileCache[pk]) {
+                    edge = Object.assign({}, edge, {
+                        user: Object.assign({}, edge.user, profileCache[pk])
+                    });
+                    if (debug_logs) console.log('Enriched user', pk, 'with cached profile data');
+                }
             }
 
             edge = Object.assign({}, edge, {
